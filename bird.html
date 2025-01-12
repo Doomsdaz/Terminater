@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird with Score and Rank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: black;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: black;
+        }
+
+        .touch-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff5722;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .touch-button:active {
+            background: #e64a19;
+        }
+
+        .restart-button {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3498db;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .restart-button:active {
+            background: #2980b9;
+        }
+
+        .score {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .rank {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px #000;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <button class="touch-button" onclick="jump()">Jump</button>
+    <button class="restart-button" onclick="restart()">Restart</button>
+    <div class="score">Score: 0</div>
+    <div class="rank">Rank: None</div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const bird = {
+            x: canvas.width / 4,
+            y: canvas.height / 2,
+            size: 10,
+            gravity: 0.5,
+            lift: -6,
+            velocity: 10
+        };
+
+        let pipes = [];
+        const pipeWidth = 10;
+        let pipeGap = 200; // Moderate gap size between pipes
+        let pipeSpeed = 2; // Moderate pipe speed
+        let frame = 0;
+        let gameRunning = true;
+        let score = 0;
+        let passedPipes = 0; // Track pipes passed
+
+        // Controls the initial 2-second delay
+        let firstPipeSpawned = false;
+
+        function drawBird() {
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, bird.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawPipes() {
+            ctx.fillStyle = "white";
+            pipes.forEach(pipe => {
+                ctx.fillRect(pipe.x, 0, pipeWidth, pipe.topHeight);
+                ctx.fillRect(pipe.x, pipe.topHeight + pipeGap, pipeWidth, canvas.height - pipe.topHeight - pipeGap);
+            });
+        }
+
+        function updatePipes() {
+            if (!firstPipeSpawned && frame > 120) { // 2 seconds delay (assuming 60 FPS)
+                firstPipeSpawned = true;
+                spawnPipe();
+            }
+
+            if (firstPipeSpawned && frame % 110 === 0) { // Spawning pipes every 1.8 seconds
+                spawnPipe();
+            }
+
+            pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
+
+            pipes.forEach(pipe => {
+                pipe.x -= pipeSpeed; // Move pipes at the moderate speed
+
+                // Check if the bird passes the pipe
+                if (pipe.x + pipeWidth < bird.x && !pipe.passed) {
+                    score++;
+                    pipe.passed = true; // Mark this pipe as passed
+                    passedPipes++;
+                    updateScoreAndRank();
+                }
+
+                // Collision detection
+                if (
+                    bird.x + bird.size > pipe.x &&
+                    bird.x - bird.size < pipe.x + pipeWidth &&
+                    (bird.y - bird.size < pipe.topHeight || bird.y + bird.size > pipe.topHeight + pipeGap)
+                ) {
+                    gameRunning = false;
+                }
+            });
+        }
+
+        function spawnPipe() {
+            const topHeight = Math.random() * (canvas.height - pipeGap - 180) + 50;
+            pipes.push({ x: canvas.width, topHeight, passed: false });
+
+            // Randomize gap size to make it moderately difficult
+            pipeGap = Math.random() * 100 + 150; // Gap size between 150 and 250
+        }
+
+        function jump() {
+            if (gameRunning) {
+                bird.velocity = bird.lift;
+            }
+        }
+
+        function updateBird() {
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+
+            if (bird.y + bird.size > canvas.height || bird.y - bird.size < 0) {
+                gameRunning = false;
+            }
+        }
+
+        function updateScoreAndRank() {
+            document.querySelector(".score").innerText = `Score: ${score}`;
+            const rankElement = document.querySelector(".rank");
+            if (score >= 1000) {
+                rankElement.innerText = "Grandmaster-I";
+            } else if (score >= 959) {
+                rankElement.innerText = "Grandmaster-II";
+            } else if (score >= 859) {
+                rankElement.innerText = "Diamond-I";
+            } else if (score >= 759) {
+                rankElement.innerText = "Diamond-II";
+            } else if (score >= 659) {
+                rankElement.innerText = "Diamond-III";
+            } else if (score >= 559) {
+                rankElement.innerText = "Platinum-I";
+            } else if (score >= 459) {
+                rankElement.innerText = "Platinum-II";
+            } else if (score >= 359) {
+                rankElement.innerHTML = "Platinum-III"
+            } else if (score >= 259) {
+                rankElement.innerHTML = "Platinum-IV"
+            } else if (score >= 159) {
+                rankElement.innerHTML = "Gold-I"
+            } else if (score >= 139) {
+                rankElement.innerHTML = "Gold-II"
+            } else if(score >= 129) {
+                rankElement.innerHTML = "Gold-III"
+            } else if(score >= 119 ){
+                rankElement.innerHTML = "Gold-IV"
+            } else if(score >= 99) {
+                rankElement.innerHTML = "Iron-I"
+            } else if(score >= 88) {
+                rankElement.innerHTML = "Iron-II"
+            } else if(score >= 66) {
+                rankElement.innerHTML = "Iron-III"
+            } else if(score >= 44) {
+                rankElement.innerHTML = "Iron-III"
+            } else if(score >= 22) {
+                rankElement.innerHTML = "Bronze-I"
+            } else if(score >= 11) {
+                rankElement.innerHTML = "Bronze-II"
+            } else if(score >= 5) {
+                rankElement.innerHTML = "Bronze-III"
+            }
+        }
+
+        function restart() {
+            bird.y = canvas.height / 2;
+            bird.velocity = 0;
+            pipes = [];
+            frame = 0;
+            firstPipeSpawned = false;
+            score = 0;
+            passedPipes = 0;
+            pipeGap = 200; // Reset gap size to moderate value
+            pipeSpeed = 2; // Reset pipe speed
+            gameRunning = true;
+            document.querySelector(".score").innerText = "Score: 0";
+            document.querySelector(".rank").innerText = "Rank: None";
+            document.querySelector(".restart-button").style.display = "none";
+            gameLoop();
+        }
+
+        function gameLoop() {
+            if (!gameRunning) {
+                document.querySelector(".restart-button").style.display = "block";
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBird();
+            drawPipes();
+            updatePipes();
+            updateBird();
+
+            frame++;
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+
+</html>
