@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            border: none;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html {
+            font-size: 62.5%;
+            cursor: default;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 2rem;
+        }
+
+        .content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+
+        .typing-text {
+            font-size: 28px;
+            font-weight: 600;
+            color: #ff0000;
+        }
+
+        .typing-text span {
+            position: relative;
+            display: inline-block;
+        }
+
+        .typing-text span::after {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #b74b4b;
+            bottom: -5px;
+            left: 0;
+            animation: underline 1s ease infinite;
+        }
+
+        .typing-text span:hover {
+            transform: scale(1.1);
+            color: red;
+            transition: 0.3s ease;
+        }
+
+        .return-btn {
+            background-color: #ff0000;
+            color: white;
+            font-size: 1.5rem;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            margin-top: 2rem;
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeInButton 2s forwards 1s; /* Delay the button animation */
+        }
+
+        .return-btn:hover {
+            transform: scale(1.1);
+            background-color: #d40000;
+            transition: 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInButton {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes underline {
+            0% {
+                width: 0;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .content h1 {
+                font-size: 3rem;
+            }
+
+            .typing-text {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <title>About Us</title>
+</head>
+
+<body>
+    <div class="content">
+        <h1>About Us</h1>
+        <p class="typing-text">
+            <span></span>
+        </p>
+        <button class="return-btn" onclick="window.location.href='index.html'">Return to Main Page</button>
+    </div>
+
+    <script>
+        const text = "Welcome to Doomsday Rift, a platform built with passion and a vision to merge the world of gaming and education. Co-founded by Vishnu and guided by CEO Dhruv, our mission is to provide engaging content, tools, and resources for students and gamers alike. Join us on our journey as we challenge conventions and redefine entertainment!";
+        
+        let index = 0;
+        const speed = 40;
+        const typewriter = document.querySelector(".typing-text span");
+
+        function typeEffect() {
+            if (index < text.length) {
+                typewriter.textContent += text.charAt(index);
+                index++;
+                setTimeout(typeEffect, speed);
+            }
+        }
+
+        window.onload = typeEffect;
+    </script>
+</body>
+
+</html>
