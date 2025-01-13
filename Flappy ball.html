@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Ball</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: black;
+            color: white;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            color: white;
+            text-shadow: 0 0 15px #ff5722, 0 0 30px #ff5722;
+        }
+
+        .typewriter {
+            font-size: 1rem;
+            color: #ff5722;
+            text-align: center;
+        }
+
+        .restart-info {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            color: #fff;
+            opacity: 0.7;
+            cursor: pointer;
+        }
+
+        .jump-btn,
+        .restart-btn {
+            position: fixed;
+            background-color: #ff5722;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .jump-btn {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .restart-btn {
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+        }
+
+        .score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .rank {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .rank span {
+            color: #ff5722;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .typewriter {
+                font-size: 1.5rem;
+            }
+
+            .restart-info {
+                font-size: 1.2rem;
+            }
+
+            .jump-btn,
+            .restart-btn {
+                font-size: 1.2rem;
+                bottom: 30px;
+            }
+
+            .score,
+            .rank {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1 id="flappyTitle"></h1>
+        <p class="typewriter" id="typewriter"></p>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <button class="jump-btn" id="jumpBtn">JUMP</button>
+    <button class="restart-btn" id="restartBtn">RESTART</button>
+    <p class="restart-info" id="restartInfo"></p>
+    <div class="score" id="score">Score: 0</div>
+    <div class="rank" id="rank">Rank: <span>None</span></div>
+
+    <script>
+        const title = "Flappy Ball";
+        const texts = [
+            "It's Flappy Rift...",
+            "Are you daring enough to reach Grandmaster?",
+            "Will you break the record?"
+        ];
+        let titleIndex = 0;
+        let textIndex = 0;
+        let charIndex = 0;
+        const speed = 30;
+        const eraseSpeed = 30;
+
+        const flappyTitle = document.getElementById("flappyTitle");
+        const typewriter = document.getElementById("typewriter");
+
+        function typeTitleEffect() {
+            if (titleIndex < title.length) {
+                flappyTitle.textContent += title.charAt(titleIndex);
+                titleIndex++;
+                setTimeout(typeTitleEffect, speed);
+            } else {
+                typeEffect();
+            }
+        }
+
+        function typeEffect() {
+            if (charIndex < texts[textIndex].length) {
+                typewriter.textContent += texts[textIndex].charAt(charIndex);
+                charIndex++;
+                setTimeout(typeEffect, speed);
+            } else {
+                setTimeout(eraseEffect, 1000);
+            }
+        }
+
+        function eraseEffect() {
+            if (charIndex > 0) {
+                typewriter.textContent = texts[textIndex].substring(0, charIndex - 1);
+                charIndex--;
+                setTimeout(eraseEffect, eraseSpeed);
+            } else {
+                textIndex = (textIndex + 1) % texts.length;
+                setTimeout(typeEffect, 500);
+            }
+        }
+
+        window.onload = typeTitleEffect;
+
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const bird = {
+            x: canvas.width / 4,
+            y: canvas.height / 2,
+            size: 10,
+            gravity: 0.5,
+            lift: -6,
+            velocity: 0
+        };
+
+        let pipes = [];
+        const pipeWidth = 10;
+        let pipeGap = 250;
+        let pipeSpeed = 2;
+        let frame = 0;
+        let score = 0;
+        let gameRunning = true;
+
+        const scoreDisplay = document.getElementById("score");
+        const rankDisplay = document.getElementById("rank");
+
+        function updateRank() {
+            let rank = "Bot";
+            if (score > 1000) rank = "<span style='color: #ff5722;'>Grandmaster</span>";
+            else if (score > 985) rank = "<span style='color: #ff5722;'>Grandmaster II</span>";
+            else if (score > 910) rank = "<span style='color: #ff5722;'>Grandmaster III</span>";
+            else if (score > 869) rank = "<span style='color: #ff5722;'>Heroic</span>";
+            else if (score > 849) rank = "<span style='color: #ff5722;'>Diamond I</span>";
+            else if (score > 800) rank = "<span style='color: #ff5722;'>Diamond II</span>";
+            else if (score > 777) rank = "<span style='color: #ff5722;'>Diamond III</span>";
+            else if (score > 733) rank = "<span style='color: #ff5722;'>Platinum I</span>";
+            else if (score > 666) rank = "<span style='color: #ff5722;'>Platinum II</span>";
+            else if (score > 600) rank = "<span style='color: #ff5722;'>Platinum III</span>";
+            else if (score > 555) rank = "<span style='color: #ff5722;'>Gold I</span>";
+            else if (score > 444) rank = "<span style='color: #ff5722;'>Gold II</span>";
+            else if (score > 333) rank = "<span style='color: #ff5722;'>Gold III</span>";
+            else if (score > 250) rank = "<span style='color: #ff5722;'>Iron I</span>";
+            else if (score > 155) rank = "<span style='color: #ff5722;'>Iron II</span>";
+            else if (score > 100) rank = "<span style='color: #ff5722;'>Iron III</span>";
+            else if (score > 55) rank = "<span style='color: #ff5722;'>Silver I</span>";
+            else if (score > 45) rank = "<span style='color: #ff5722;'>Silver II</span>";
+            else if (score > 35) rank = "<span style='color: #ff5722;'>Silver III</span>";
+            else if (score > 15) rank = "<span style='color: #ff5722;'>Bronze I</span>";
+            else if (score > 10) rank = "<span style='color: #ff5722;'>Bronze II</span>";
+            else if (score > 5) rank = "<span style='color: #ff5722;'>Bronze III</span>";
+
+            rankDisplay.innerHTML = `Rank: ${rank}`;
+        }
+
+        function updateScore() {
+            score += 1;
+            scoreDisplay.textContent = `Score: ${score}`;
+            updateRank();
+        }
+
+        function drawBird() {
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, bird.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function updateBird() {
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+
+            if (bird.y + bird.size > canvas.height || bird.y - bird.size < 0) {
+                gameRunning = false;
+                showRestartButton();
+            }
+        }
+
+        function drawPipes() {
+            ctx.fillStyle = "white";
+            pipes.forEach(pipe => {
+                ctx.fillRect(pipe.x, 0, pipeWidth, pipe.topHeight);
+                ctx.fillRect(pipe.x, pipe.topHeight + pipeGap, pipeWidth, canvas.height - pipe.topHeight - pipeGap);
+            });
+        }
+
+        function updatePipes() {
+            if (frame % 120 === 0) {
+                const topHeight = Math.random() * (canvas.height - pipeGap - 50) + 25;
+                pipes.push({ x: canvas.width, topHeight });
+            }
+
+            pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
+
+            pipes.forEach(pipe => {
+                pipe.x -= pipeSpeed;
+
+                if (
+                    bird.x + bird.size > pipe.x &&
+                    bird.x - bird.size < pipe.x + pipeWidth &&
+                    (bird.y - bird.size < pipe.topHeight || bird.y + bird.size > pipe.topHeight + pipeGap)
+                ) {
+                    gameRunning = false;
+                    showRestartButton();
+                }
+
+                if (pipe.x + pipeWidth < bird.x && !pipe.passed) {
+                    pipe.passed = true;
+                    updateScore();
+                }
+            });
+        }
+
+        function jump() {
+            if (gameRunning) {
+                bird.velocity = bird.lift;
+            }
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.code === "Space") {
+                if (!gameRunning) restartGame();
+                jump();
+            }
+        });
+
+        document.getElementById("jumpBtn").addEventListener("click", () => {
+            if (!gameRunning) restartGame();
+            jump();
+        });
+
+        document.getElementById("restartBtn").addEventListener("click", restartGame);
+
+        function restartGame() {
+            bird.y = canvas.height / 2;
+            bird.velocity = 0;
+            pipes = [];
+            score = 0;
+            frame = 0;
+            gameRunning = true;
+            scoreDisplay.textContent = `Score: 0`;
+            rankDisplay.innerHTML = `Rank: <span>Bot</span>`;
+            hideRestartButton();
+            gameLoop();
+        }
+
+        function showRestartButton() {
+            document.getElementById("restartBtn").style.display = "block";
+        }
+
+        function hideRestartButton() {
+            document.getElementById("restartBtn").style.display = "none";
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!gameRunning) return;
+
+            drawBird();
+            drawPipes();
+            updatePipes();
+            updateBird();
+
+            frame++;
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+
+</html>
