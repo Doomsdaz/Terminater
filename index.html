@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Sign up Page</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000;
+        }
+
+        .wrapper {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            background: #000;
+            box-shadow: 0 0 50px #0ef;
+            border-radius: 20px;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .wrapper:hover {
+            animation: animate 1s linear infinite;
+        }
+
+        @keyframes animate {
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        .form-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            transition: 1s ease-in-out;
+        }
+
+        .wrapper.active .form-wrapper.sign-in {
+            transform: translateY(-450px);
+        }
+
+        .wrapper .form-wrapper.sign-up {
+            position: absolute;
+            top: 450px;
+            left: 0;
+        }
+
+        .wrapper.active .form-wrapper.sign-up {
+            transform: translateY(-450px);
+        }
+
+        h2 {
+            font-size: 30px;
+            color: #fff;
+            text-align: center;
+        }
+
+        /* Change color of DoomsDay text */
+        h2 span {
+            color: red;
+            transition: color 0.3s;
+        }
+
+        h2 span:hover {
+            color: yellow;
+            /* Hover effect */
+        }
+
+        .input-group {
+            position: relative;
+            margin: 30px 0;
+            border-bottom: 2px solid #fff;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #fff;
+            pointer-events: none;
+            transition: .5s;
+        }
+
+        .input-group input {
+            width: 320px;
+            height: 40px;
+            font-size: 16px;
+            color: #fff;
+            padding: 0 5px;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .input-group input:focus~label,
+        .input-group input:valid~label {
+            top: -5px;
+        }
+
+        .remember {
+            margin: -5px 0 15px 5px;
+        }
+
+        .remember label {
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .remember label input {
+            accent-color: #0ef;
+        }
+
+        button {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            background: #0ef;
+            box-shadow: 0 0 10px #0ef;
+            font-size: 16px;
+            color: #000;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+        }
+
+        .signUp-link {
+            font-size: 14px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .signUp-link p {
+            color: #fff;
+        }
+
+        .signUp-link p a {
+            color: #0ef;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signUp-link p a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="form-wrapper sign-in">
+            <form id="login-form">
+                <h2><span>DoomsDay</span> Log in</h2>
+                <div class="input-group">
+                    <input type="text" id="login-username" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" required>
+                    <label>Password</label>
+                </div>
+                <button type="submit">Log in</button>
+                <div class="signUp-link">
+                    <p>Don't have an account? <a href="#" class="signUpBtn-link">Sign in</a></p>
+                </div>
+            </form>
+        </div>
+        <div class="form-wrapper sign-up">
+            <form id="signup-form">
+                <h2><span>DoomsDay </span>Sign Up</h2>
+                <div class="input-group">
+                    <input type="text" id="signup-username" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="signup-email" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="signup-password" required>
+                    <label>Password</label>
+                </div>
+                <button type="submit">Sign Up</button>
+                <div class="signUp-link">
+                    <p>Already have an account? <a href="#" class="signInBtn-link">Log in</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const signInBtnLink = document.querySelector('.signInBtn-link');
+        const signUpBtnLink = document.querySelector('.signUpBtn-link');
+        const wrapper = document.querySelector('.wrapper');
+
+        signUpBtnLink.addEventListener('click', () => {
+            wrapper.classList.toggle('active');
+        });
+
+        signInBtnLink.addEventListener('click', () => {
+            wrapper.classList.toggle('active');
+        });
+
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxyp8tGMOZPeev6B3iVTko7JeiKxhSN04AlO7-2DiZ3uo71sMEi34AwCsnhe7K0XjuP/exec';
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            // Username check (max 8 characters)
+            if (username.length > 8) {
+                alert("Username must be less than or equal to 8 characters.");
+                return;
+            }
+
+            // Password check (max 20 characters)
+            if (password.length > 20) {
+                alert("Password must be less than or equal to 20 characters.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${scriptURL}?action=login&username=${username}&password=${password}`);
+                const result = await response.text();
+
+                if (result.includes('Login successful')) {
+                    console.log('Login successful!');
+                    window.location.href = 'Main.html';
+                } else {
+                    alert('Login failed: ' + result);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+
+        signupForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            // Username check (max 8 characters)
+            if (username.length > 8) {
+                alert("Username must be less than or equal to 8 characters.");
+                return;
+            }
+
+            // Password check (max 20 characters)
+            if (password.length > 20) {
+                alert("Password must be less than or equal to 20 characters.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${scriptURL}?action=signup&username=${username}&email=${email}&password=${password}`);
+                const result = await response.text();
+                alert(result);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+
+</html>
