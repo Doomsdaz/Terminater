@@ -1,302 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
-    
-    <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        text-decoration: none;
-        border: none;
-        outline: none;
-        font-family: 'Poppins', sans-serif;
-    }
-    
-    html {
-        font-size: 75%;  /* Increased from 62.5% to 75% for larger base font */
-        cursor: default;
-    }
-    
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Card Matching Game</title>
+  <style>
     body {
-        width: 100%;
-        height: 100vh;
-        overflow-x: hidden;
-        background-color: rgb(117, 117, 117);
-        color: white;
-        font-size: 1.6rem;  /* Adjust body font size */
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: url('ght.jpg') no-repeat center center fixed;
+      background-size: cover;
+      flex-direction: column;
+      color: white;
+      background-color: black;
     }
-    
-    header {
-        margin-top: 20px;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 1rem 9%;
-        background-color: transparent;
-        filter: drop-shadow(10px);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        z-index: 100;
+    .game-container {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-template-rows: repeat(4, 100px);
+      gap: 10px;
+      justify-items: center;
+      margin-bottom: 20px;
     }
-    
-    .logo {
-        font-size: 4rem; /* Increased font size for logo */
-        color: #b74b4b;
-        font-weight: 800;
-        transition: 0.5s ease;
+    .card {
+      width: 90px;
+      height: 90px;
+      background-color: #830d00;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      transform: scale(1);
+      transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
     }
-    
-    .logo:hover {
-        transform: scale(1.1);
+    .card.flipped {
+      background-color: #b11807;
+      transform: scale(1.1);
     }
-    
-    nav {
-        display: flex;
-        align-items: center;
+    .card.matched {
+      background-color: #790000;
+      cursor: not-allowed;
     }
-    
-    nav a {
-        font-size: 2.2rem; /* Increased font size for nav links */
-        color: white;
-        margin-left: 4rem;
-        font-weight: 500;
-        transition: 0.3s ease;
-        border-bottom: 3px solid transparent;
+    .card:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #ffffff;
     }
-    
-    nav a:hover,
-    nav a.active {
-        color: #b74b4b;
-        border-bottom: 3px solid #b74b4b;
+    .message, .percentage, .timer, .level {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      text-shadow: 0px 0px 10px white;
     }
-    
-    .menu-icon {
-        display: none;
-        font-size: 2.5rem;
-        color: white;
-        cursor: pointer;
+    .percentage {
+      margin-top: 20px;
+      color: white;
     }
-    
-    @media(max-width:995px) {
-        .menu-icon {
-            display: block;
-        }
-    
-        nav {
-            position: absolute;
-            display: none;
-            top: 100%;
-            right: 0;
-            width: 50%;
-            border-left: 3px solid #b74b4b;
-            border-bottom: 3px solid #b74b4b;
-            border-bottom-left-radius: 2rem;
-            padding: 1rem;
-            background-color: #161616;
-            flex-direction: column;
-        }
-    
-        nav.active {
-            display: flex;
-        }
-    
-        nav a {
-            font-size: 2.5rem; /* Increased font size for nav links in mobile view */
-            margin: 1rem 0;
-        }
+    .button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #5a0900;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
     }
-    
-    section {
-        min-height: 100vh;
-        padding: 5rem 9% 5rem;
+    .button:hover {
+      background-color: #2e2e2e;
+      box-shadow: 0px 0px 10px white;
+      position: relative;
+      top: -12px;
     }
-    
-    .home {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8rem;
-        background-color: black;
+    .level {
+      font-size: 20px;
+      color: white;
+      margin-top: 20px;
     }
-    
-    .home .home-content h1 {
-        font-size: 8rem; /* Increased font size for main heading */
-        font-weight: 700;
-        line-height: 1.3;
+    .timer {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: white;
     }
-    
-    span {
-        color: #b74b4b;
+    @media (max-width: 600px) {
+      .game-container {
+        grid-template-columns: repeat(4, 80px);
+        grid-template-rows: repeat(4, 80px);
+      }
     }
-    
-    .home-content h3 {
-        font-size: 5rem; /* Increased font size for sub-heading */
-        margin-bottom: 1rem;
-        font-weight: 700;
-    }
-    
-    .home-content p {
-        font-size: 2rem; /* Increased font size for paragraph text */
-        color: rgb(255, 255, 255);
-    }
-    
-    .home-img {
-        border-radius: 50%;
-    }
-    
-    .home-img img {
-        position: relative;
-        width: 32vw;
-        border-radius: 50%;
-        box-shadow: 0 0 25px solid #b74b4b;
-        transition: 0.2s linear;
-    }
-    
-    .home-img img:hover {
-        font-size: 1.8rem;
-        font-weight: 500;
-    }
-    
-    .social-icons a {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        width: 5rem; /* Increased icon size */
-        height: 5rem;
-        background-color: transparent;
-        border: 0.2rem solid #b74b4b;
-        font-size: 2.5rem; /* Increased icon font size */
-        border-radius: 50%;
-        margin: 3rem 1.5rem 3rem 0;
-        transition: 0.3s ease;
-        color: #b74b4b;
-    }
-    
-    .social-icons a:hover {
-        color: black;
-        transform: scale(1.3) translateY(-5px);
-        background-color: #b74b4b;
-        box-shadow: 0 0 25px #b74b4b;
-    }
-    
-    .btn {
-        display: inline-block;
-        padding: 1rem 3.5rem; /* Increased button padding */
-        background-color: black;
-        border-radius: 4rem;
-        font-size: 2rem; /* Increased font size for button */
-        color: #b74b4b;
-        letter-spacing: 0.3rem;
-        font-weight: 600;
-        border: 2px solid #b74b4b;
-        transition: 0.3s ease;
-    }
-    
-    .btn:hover {
-        transform: scale3d(1.03);
-        background-color: #b74b4b;
-        color: black;
-        box-shadow: 0 0 25px #b74b4b;
-    }
-    
-    @media (max-width: 1000px) {
-        .home {
-            gap: 4rem;
-        }
-    }
-    
-    @media(max-width:995px) {
-        .home {
-            flex-direction: column;
-            margin: 5rem 4rem;
-        }
-    
-        .home .home-content h3 {
-            font-size: 3.5rem; /* Increased font size for mobile view */
-        }
-    
-        .home-content h1 {
-            font-size: 6rem; /* Increased font size for main heading on mobile */
-        }
-    
-        .home-img img {
-            width: 70vw;
-            margin-top: 4rem;
-        }
-    }
-
-    </style>    
+  </style>
 </head>
-    <title>Doomsday_Rift</title>
-</head>
-
 <body>
-    <header>
-        <div class="logo">Doomsday</div>
-        <i class="fas fa-bars menu-icon" onclick="toggleMenu()"></i>
-        <nav>
-            <a href="#" class="active">Home</a>
-            <a href="Game.html">Games</a>
-            <a href="Notes.html">PDFs</a>
-            <a href="About_me.html">About me</a>
-            <a class="Know" href="#" onclick="alert('There is no currently update can seen...')">Update alert</a>
-        </nav>
-    </header>
-    <section class="home">
-        <div class="home-content">
-            <h1>Hi, It's <span style="color: red;">Doomsday</span></h1>
-            <p>Headlines : <span id="typewriter"></span>|</p>
-            <h3 class="typing-text">We 're <span style="color: red;">Dhruv and Vishnu</span></h3>
-            <p>This website is for enjoyment and to help SFS students access subject PDFs and complete their work.</p>
-            <div class="social-icons">
-                <a href="#"><i class="fa-brands fa-google"></i></a>
-                <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://www.instagram.com/dhruv____thakur____?igsh=YzljYTk1ODg3Zg=="><i class="fa-brands fa-instagram"></i></a>
-            </div>
-            <a title="Wait for it, it's on working..." href="" class="btn">On working</a>
-        </div>
-    </section>
-    <script>
-        const texts = ["Step into the chaos and uncover the mysteries - Welcome to Doomsday Rift, Where every game shapes your destiny...", "Forge alliances, face the unknown, and conquer the shadows lurking within...", "Your adventure begins now - Are you ready to rewrite the fate?"];
-        let index = 0, charIndex = 0;
-        const speed = 40;
-        const typewriter = document.getElementById("typewriter");
 
-        function typeEffect() {
-            if (charIndex < texts[index].length) {
-                typewriter.textContent += texts[index].charAt(charIndex);
-                charIndex++;
-                setTimeout(typeEffect, speed);
-            } else {
-                setTimeout(eraseEffect, 1000);
-            }
+  <div class="game-container" id="game-container"></div>
+  <div class="message" id="message">Find all the matching pairs!</div>
+  <div class="percentage" id="percentage">Pairs Matched: 0%</div>
+  <div class="timer" id="timer">Time Left: 60s</div>
+  <div class="level" id="level">Level: Easy</div>
+  <button class="button" id="restart-button" onclick="restartGame()">Restart Game</button>
+  <button class="button" id="next-level-button" style="display: none;" onclick="nextLevel()">Next Level</button>
+
+  <script>
+    let shuffledCards = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let totalPairs;
+    let timerInterval;
+    let timeLeft = 60; // Starting time for Level 1 (Easy)
+    let level = 1;
+    const maxLevel = 10; // Maximum level
+
+    const gameContainer = document.getElementById('game-container');
+    const message = document.getElementById('message');
+    const percentageDisplay = document.getElementById('percentage');
+    const timerDisplay = document.getElementById('timer');
+    const levelDisplay = document.getElementById('level');
+    const nextLevelButton = document.getElementById('next-level-button');
+
+    // Function to create cards for the current level
+    function createCards() {
+      totalPairs = Math.min(level + 2, 18); // Limit pairs to 18 for bigger levels
+      const cards = generateCards(totalPairs); // Dynamically generate cards
+      shuffledCards = shuffle(cards);
+      
+      shuffledCards.forEach((cardValue, index) => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.setAttribute('data-index', index);
+        card.setAttribute('data-value', cardValue);
+        card.addEventListener('click', flipCard);
+        gameContainer.appendChild(card);
+      });
+
+      startTimer();
+    }
+
+    // Dynamically generate card pairs for the level
+    function generateCards(pairs) {
+      const cardValues = [];
+      for (let i = 0; i < pairs; i++) {
+        cardValues.push(String.fromCharCode(65 + i)); // Letters A, B, C, ...
+      }
+      return [...cardValues, ...cardValues]; // Return two of each card
+    }
+
+    // Shuffle the cards
+    function shuffle(array) {
+      let currentIndex = array.length, randomIndex, temporaryValue;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+      return array;
+    }
+
+    // Flip the card when clicked
+    function flipCard(event) {
+      const clickedCard = event.target;
+
+      if (flippedCards.length === 2 || clickedCard.classList.contains('flipped') || clickedCard.classList.contains('matched')) {
+        return;
+      }
+
+      clickedCard.classList.add('flipped');
+      clickedCard.textContent = clickedCard.getAttribute('data-value');
+      flippedCards.push(clickedCard);
+
+      if (flippedCards.length === 2) {
+        setTimeout(checkMatch, 1000);
+      }
+    }
+
+    // Check if the two flipped cards match
+    function checkMatch() {
+      const [firstCard, secondCard] = flippedCards;
+      if (firstCard.getAttribute('data-value') === secondCard.getAttribute('data-value')) {
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        matchedPairs++;
+        updatePercentage();
+      } else {
+        firstCard.classList.remove('flipped');
+        secondCard.classList.remove('flipped');
+        firstCard.textContent = '';
+        secondCard.textContent = '';
+      }
+      flippedCards = [];
+
+      // If all pairs are matched, show the Next Level button
+      if (matchedPairs === totalPairs) {
+        showNextLevelButton();
+      }
+    }
+
+    // Update the percentage of matched pairs
+    function updatePercentage() {
+      const percentage = (matchedPairs / totalPairs) * 100;
+      percentageDisplay.textContent = `Pairs Matched: ${Math.round(percentage)}%`;
+    }
+
+    // Start the timer
+    function startTimer() {
+      timerInterval = setInterval(function() {
+        timeLeft--;
+        timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          message.textContent = `Time's up! You matched ${matchedPairs} pairs.`;
+          updatePercentage();
+          alert('Time\'s up! Try again.');
+          resetGame(); // Reset the game when time runs out
         }
+      }, 2000); // Timer updates every 1 second
+    }
 
-        function eraseEffect() {
-            if (charIndex > 0) {
-                typewriter.textContent = texts[index].substring(0, charIndex - 1);
-                charIndex--;
-                setTimeout(eraseEffect, 20);
-            } else {
-                index = (index + 1) % texts.length;
-                setTimeout(typeEffect, 500);
-            }
-        }
+    // Show Next Level Button
+    function showNextLevelButton() {
+      nextLevelButton.style.display = 'block'; // Show the button
+    }
 
-        function toggleMenu() {
-            const nav = document.querySelector('nav');
-            nav.classList.toggle('active');
-        }
+    // Proceed to next level when button is clicked
+    function nextLevel() {
+      if (level < maxLevel) {
+        level++;  // Proceed to the next level
+        timeLeft = 60; // Reset time for the new level
+        levelDisplay.textContent = `Level: ${getLevelName(level)}`;
+        matchedPairs = 0; // Reset matched pairs
+        shuffledCards = shuffle(generateCards(level + 2)); // More cards as level increases
+        gameContainer.innerHTML = ''; // Clear the old game board
+        createCards();
+        nextLevelButton.style.display = 'none'; // Hide the Next Level button
+        message.textContent = `Level ${level}: Match the pairs!`;
+      } else {
+        message.textContent = `Congratulations! You've completed all levels!`;
+        nextLevelButton.style.display = 'none'; // Hide the button when max level is reached
+      }
+    }
 
-        window.onload = typeEffect;
-    </script>
+    // Get level name based on level number
+    function getLevelName(level) {
+      const levels = ["Easy", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6", "Level 7", "Level 8", "Level 9", "Level 10"];
+      return levels[level - 1] || `Level ${level}`;
+    }
+
+    // Reset the game (save current level)
+    function resetGame() {
+      shuffledCards = shuffle(generateCards(level + 2));
+      matchedPairs = 0;
+      flippedCards = [];
+      timeLeft = 60;
+      clearInterval(timerInterval);
+      gameContainer.innerHTML = '';
+      createCards();
+      levelDisplay.textContent = `Level: ${getLevelName(level)}`;
+      message.textContent = 'Find all the matching pairs!';
+      percentageDisplay.textContent = 'Pairs Matched: 0%';
+      timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+      nextLevelButton.style.display = 'none'; // Hide Next Level button when restarting
+    }
+
+    createCards();
+  </script>
+
 </body>
-
 </html>
