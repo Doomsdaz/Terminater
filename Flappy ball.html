@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy ball</title>
+    <title>Flappy Ball</title>
     <style>
         * {
             margin: 0;
@@ -34,50 +34,40 @@
         }
 
         .header h1 {
-            font-size: 4rem;
+            font-size: 2rem;
             color: white;
-            text-shadow: 0 0 15px #ff5722, 0 0 30px #ff5722;
-        }
-
-        .typewriter {
-            font-size: 1rem;
-            color: #ff5722;
-            text-align: center;
-        }
-
-        .restart-info {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.5rem;
-            color: #fff;
-            opacity: 0.7;
-            cursor: pointer;
+            text-shadow: 0 0 35px #ff5722, 0 0 30px #ff5722;
         }
 
         .jump-btn,
         .restart-btn {
             position: fixed;
-            background-color: #ff5722;
+            width: 140px;
+            height:60px;
+            background-color: black;
             color: white;
-            padding: 10px 20px;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             z-index: 100;
+            text-align: center;
+            line-height: 50px;
         }
 
         .jump-btn {
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
+            box-shadow: 0px 0px 20px red; 
         }
 
         .restart-btn {
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             display: none;
+            box-shadow: 0px 0px 20px red;
         }
 
         .score {
@@ -99,96 +89,20 @@
         .rank span {
             color: #ff5722;
         }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
-            }
-
-            .typewriter {
-                font-size: 1.5rem;
-            }
-
-            .restart-info {
-                font-size: 1.2rem;
-            }
-
-            .jump-btn,
-            .restart-btn {
-                font-size: 1.2rem;
-                bottom: 30px;
-            }
-
-            .score,
-            .rank {
-                font-size: 1.5rem;
-            }
-        }
     </style>
 </head>
 
 <body>
     <div class="header">
-        <h1 id="flappyTitle"></h1>
-        <p class="typewriter" id="typewriter"></p
+        <h1 id="flappyTitle">Flappy Ball</h1>
     </div>
     <canvas id="gameCanvas"></canvas>
     <button class="jump-btn" id="jumpBtn">JUMP</button>
     <button class="restart-btn" id="restartBtn">RESTART</button>
-    <p class="restart-info" id="restartInfo"></p>
     <div class="score" id="score">Score: 0</div>
     <div class="rank" id="rank">Rank: <span>None</span></div>
 
     <script>
-        const title = "Flappy Ball";
-        const texts = [
-            "Normal Graphics .",
-            "High range .",
-            "High ranks ."
-            
-        ];
-        let titleIndex = 0;
-        let textIndex = 0;
-        let charIndex = 0;
-        const speed = 30;
-        const eraseSpeed = 30;
-
-        const flappyTitle = document.getElementById("flappyTitle");
-        const typewriter = document.getElementById("typewriter");
-
-        function typeTitleEffect() {
-            if (titleIndex < title.length) {
-                flappyTitle.textContent += title.charAt(titleIndex);
-                titleIndex++;
-                setTimeout(typeTitleEffect, speed);
-            } else {
-                typeEffect();
-            }
-        }
-
-        function typeEffect() {
-            if (charIndex < texts[textIndex].length) {
-                typewriter.textContent += texts[textIndex].charAt(charIndex);
-                charIndex++;
-                setTimeout(typeEffect, speed);
-            } else {
-                setTimeout(eraseEffect, 1000);
-            }
-        }
-
-        function eraseEffect() {
-            if (charIndex > 0) {
-                typewriter.textContent = texts[textIndex].substring(0, charIndex - 1);
-                charIndex--;
-                setTimeout(eraseEffect, eraseSpeed);
-            } else {
-                textIndex = (textIndex + 1) % texts.length;
-                setTimeout(typeEffect, 500);
-            }
-        }
-
-        window.onload = typeTitleEffect;
-
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
@@ -207,7 +121,7 @@
         let pipes = [];
         const pipeWidth = 10;
         let pipeGap = 250;
-        let pipeSpeed = 2;
+        let pipeSpeed = 3;
         let frame = 0;
         let score = 0;
         let gameRunning = true;
@@ -215,38 +129,41 @@
         const scoreDisplay = document.getElementById("score");
         const rankDisplay = document.getElementById("rank");
 
-        function updateRank() {
+        function updateRankAndSpeed() {
             let rank = "Bot";
-            if (score > 1000) rank = "<span style='color: #ff5722;'>Grandmaster</span>";
-            else if (score > 985) rank = "<span style='color: #ff5722;'>Grandmaster II</span>";
-            else if (score > 910) rank = "<span style='color: #ff5722;'>Grandmaster III</span>";
-            else if (score > 869) rank = "<span style='color: #ff5722;'>Heroic</span>";
-            else if (score > 849) rank = "<span style='color: #ff5722;'>Diamond I</span>";
-            else if (score > 800) rank = "<span style='color: #ff5722;'>Diamond II</span>";
-            else if (score > 777) rank = "<span style='color: #ff5722;'>Diamond III</span>";
-            else if (score > 733) rank = "<span style='color: #ff5722;'>Platinum I</span>";
-            else if (score > 666) rank = "<span style='color: #ff5722;'>Platinum II</span>";
-            else if (score > 600) rank = "<span style='color: #ff5722;'>Platinum III</span>";
-            else if (score > 555) rank = "<span style='color: #ff5722;'>Gold I</span>";
-            else if (score > 444) rank = "<span style='color: #ff5722;'>Gold II</span>";
-            else if (score > 333) rank = "<span style='color: #ff5722;'>Gold III</span>";
-            else if (score > 250) rank = "<span style='color: #ff5722;'>Iron I</span>";
-            else if (score > 155) rank = "<span style='color: #ff5722;'>Iron II</span>";
-            else if (score > 100) rank = "<span style='color: #ff5722;'>Iron III</span>";
-            else if (score > 55) rank = "<span style='color: #ff5722;'>Silver I</span>";
-            else if (score > 45) rank = "<span style='color: #ff5722;'>Silver II</span>";
-            else if (score > 35) rank = "<span style='color: #ff5722;'>Silver III</span>";
-            else if (score > 15) rank = "<span style='color: #ff5722;'>Bronze I</span>";
-            else if (score > 10) rank = "<span style='color: #ff5722;'>Bronze II</span>";
-            else if (score > 5) rank = "<span style='color: #ff5722;'>Bronze III</span>";
+            if (score > 200)rank = " ★ Grandmaster I ";
+            else if (score > 100) rank = "★★ Grandmaster II";
+            else if (score > 95) rank = " ★★★  Grandmaster III"   ;
+            else if (score > 90) rank = "Heroic";
+            else if (score > 85) rank = "Diamond I";
+            else if (score > 80) rank = "Diamond II";
+            else if (score > 75) rank = "Diamond III";
+            else if (score > 70) rank = "Platinum I";
+            else if (score > 65) rank = "Platinum II";
+            else if (score > 60) rank = "Platinum III";
+            else if (score > 55) rank = "Gold I";
+            else if (score > 50) rank = "Gold II";
+            else if (score > 45) rank = "Gold III";
+            else if (score > 40) rank = "Iron I";
+            else if (score > 35) rank = "Iron II";
+            else if (score > 100) rank = "Iron III";
+            else if (score > 30) rank = "Silver I";
+            else if (score > 25) rank = "Silver II";
+            else if (score > 20) rank = "Silver III";
+            else if (score > 15) rank = "Bronze I";
+            else if (score > 10) rank = "Bronze II";
+            else if (score > 5) rank = "Bronze III";
 
-            rankDisplay.innerHTML = `Rank: ${rank}`;
+            rankDisplay.innerHTML = `Rank: <span>${rank}</span>`;
+
+            // Pipe speed increases by 1 for every 10 points
+            pipeSpeed = 2 + Math.floor(score / 15);
         }
 
         function updateScore() {
             score += 1;
             scoreDisplay.textContent = `Score: ${score}`;
-            updateRank();
+            updateRankAndSpeed();
         }
 
         function drawBird() {
@@ -327,6 +244,7 @@
             pipes = [];
             score = 0;
             frame = 0;
+            pipeSpeed = 3;
             gameRunning = true;
             scoreDisplay.textContent = `Score: 0`;
             rankDisplay.innerHTML = `Rank: <span>Bot</span>`;
