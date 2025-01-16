@@ -130,7 +130,7 @@
 <body>
     <div class="header">
         <h1 id="flappyTitle"></h1>
-        <p class="typewriter" id="typewriter"></p>
+        <p class="typewriter" id="typewriter"></p
     </div>
     <canvas id="gameCanvas"></canvas>
     <button class="jump-btn" id="jumpBtn">JUMP</button>
@@ -142,9 +142,10 @@
     <script>
         const title = "Flappy Ball";
         const texts = [
-            "It's Flappy Rift...",
-            "Are you daring enough to reach Grandmaster?",
-            "Will you break the record?"
+            "Normal Graphics ."
+            "High range .",
+            "High ranks ."
+            
         ];
         let titleIndex = 0;
         let textIndex = 0;
@@ -171,7 +172,7 @@
                 charIndex++;
                 setTimeout(typeEffect, speed);
             } else {
-                setTimeout(eraseEffect, 1000);
+                setTimeout(eraseEffect, 2000);
             }
         }
 
@@ -182,7 +183,7 @@
                 setTimeout(eraseEffect, eraseSpeed);
             } else {
                 textIndex = (textIndex + 1) % texts.length;
-                setTimeout(typeEffect, 500);
+                setTimeout(typeEffect, 400);
             }
         }
 
