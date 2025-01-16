@@ -43,7 +43,7 @@
         .restart-btn {
             position: fixed;
             width: 140px;
-            height:60px;
+            height: 60px;
             background-color: black;
             color: white;
             font-size: 1.2rem;
@@ -59,7 +59,7 @@
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0px 0px 20px red; 
+            box-shadow: 0px 0px 20px red;
         }
 
         .restart-btn {
@@ -89,6 +89,18 @@
         .rank span {
             color: #ff5722;
         }
+
+        .highest-rank {
+            position: absolute;
+            top: 120px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .highest-rank span {
+            color: #00ff00;
+        }
     </style>
 </head>
 
@@ -101,6 +113,7 @@
     <button class="restart-btn" id="restartBtn">RESTART</button>
     <div class="score" id="score">Score: 0</div>
     <div class="rank" id="rank">Rank: <span>None</span></div>
+    <div class="highest-rank" id="highestRank">Highest Rank: <span>None</span></div>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
@@ -125,39 +138,55 @@
         let frame = 0;
         let score = 0;
         let gameRunning = true;
+        let hasSpeedIncreased = false;
 
         const scoreDisplay = document.getElementById("score");
         const rankDisplay = document.getElementById("rank");
+        const highestRankDisplay = document.getElementById("highestRank");
+
+        let highestRank = "None";
+        const ranks = [
+            "Bot",
+            "Bronze III",
+            "Bronze II",
+            "Bronze I",
+            "Silver III",
+            "Silver II",
+            "Silver I",
+            "Iron III",
+            "Iron II",
+            "Iron I",
+            "Gold III",
+            "Gold II",
+            "Gold I",
+            "Platinum III",
+            "Platinum II",
+            "Platinum I",
+            "Diamond III",
+            "Diamond II",
+            "Diamond I",
+            "Heroic",
+            "★★★ Grandmaster III",
+            "★★ Grandmaster II",
+            "★ Grandmaster I"
+        ];
+
+        let particles = []; 
 
         function updateRankAndSpeed() {
-            let rank = "Bot";
-            if (score > 200)rank = " ★ Grandmaster I ";
-            else if (score > 100) rank = "★★ Grandmaster II";
-            else if (score > 95) rank = " ★★★  Grandmaster III"   ;
-            else if (score > 90) rank = "Heroic";
-            else if (score > 85) rank = "Diamond I";
-            else if (score > 80) rank = "Diamond II";
-            else if (score > 75) rank = "Diamond III";
-            else if (score > 70) rank = "Platinum I";
-            else if (score > 65) rank = "Platinum II";
-            else if (score > 60) rank = "Platinum III";
-            else if (score > 55) rank = "Gold I";
-            else if (score > 50) rank = "Gold II";
-            else if (score > 45) rank = "Gold III";
-            else if (score > 40) rank = "Iron I";
-            else if (score > 35) rank = "Iron II";
-            else if (score > 100) rank = "Iron III";
-            else if (score > 30) rank = "Silver I";
-            else if (score > 25) rank = "Silver II";
-            else if (score > 20) rank = "Silver III";
-            else if (score > 15) rank = "Bronze I";
-            else if (score > 10) rank = "Bronze II";
-            else if (score > 5) rank = "Bronze III";
+            let rankIndex = Math.min(Math.floor(score / 5), ranks.length - 1);
+            const currentRank = ranks[rankIndex];
+            rankDisplay.innerHTML = `Rank: <span>${currentRank}</span>`;
 
-            rankDisplay.innerHTML = `Rank: <span>${rank}</span>`;
+            if (ranks.indexOf(currentRank) > ranks.indexOf(highestRank)) {
+                highestRank = currentRank;
+                highestRankDisplay.innerHTML = `Highest Rank: <span>${highestRank}</span>`;
+            }
 
-            // Pipe speed increases by 1 for every 10 points
-            pipeSpeed = 2 + Math.floor(score / 15);
+            if (score > 0 && !hasSpeedIncreased) {
+                pipeSpeed += 3;
+                hasSpeedIncreased = true;
+            }
         }
 
         function updateScore() {
@@ -173,6 +202,32 @@
             ctx.fill();
         }
 
+        function drawParticles() {
+            particles.forEach((particle, index) => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                particle.x -= particle.speed;
+                particle.opacity -= 0.02;
+
+                if (particle.opacity <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+        }
+
+        function createParticle(x, y) {
+            particles.push({
+                x: x,
+                y: y,
+                size: Math.random() * 5 + 2,
+                speed: Math.random() * 2 + 1,
+                opacity: 1
+            });
+        }
+
         function updateBird() {
             bird.velocity += bird.gravity;
             bird.y += bird.velocity;
@@ -181,6 +236,8 @@
                 gameRunning = false;
                 showRestartButton();
             }
+
+            createParticle(bird.x, bird.y);
         }
 
         function drawPipes() {
@@ -242,12 +299,15 @@
             bird.y = canvas.height / 2;
             bird.velocity = 0;
             pipes = [];
+            particles = [];
             score = 0;
             frame = 0;
             pipeSpeed = 3;
+            hasSpeedIncreased = false;
             gameRunning = true;
             scoreDisplay.textContent = `Score: 0`;
             rankDisplay.innerHTML = `Rank: <span>Bot</span>`;
+            highestRankDisplay.innerHTML = `Highest Rank: <span>${highestRank}</span>`;
             hideRestartButton();
             gameLoop();
         }
@@ -265,6 +325,7 @@
 
             if (!gameRunning) return;
 
+            drawParticles();
             drawBird();
             drawPipes();
             updatePipes();
