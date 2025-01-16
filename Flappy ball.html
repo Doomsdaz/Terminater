@@ -133,8 +133,9 @@
 
         let pipes = [];
         const pipeWidth = 10;
-        let pipeGap = 250;
-        let pipeSpeed = 3;
+        const pipeGap = 250;
+        const pipeDistance = 350; // Fixed distance between poles
+        let pipeSpeed = 2;
         let frame = 0;
         let score = 0;
         let gameRunning = true;
@@ -249,7 +250,7 @@
         }
 
         function updatePipes() {
-            if (frame % 120 === 0) {
+            if (pipes.length === 0 || canvas.width - pipes[pipes.length - 1].x >= pipeDistance) {
                 const topHeight = Math.random() * (canvas.height - pipeGap - 50) + 25;
                 pipes.push({ x: canvas.width, topHeight });
             }
@@ -302,7 +303,7 @@
             particles = [];
             score = 0;
             frame = 0;
-            pipeSpeed = 3;
+            pipeSpeed = 2;
             hasSpeedIncreased = false;
             gameRunning = true;
             scoreDisplay.textContent = `Score: 0`;
