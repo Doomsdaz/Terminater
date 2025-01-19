@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+Remove all comments in this code and give me all code <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe Game | DoomsDay</title>
+    <title>AI Cross | DoomsDay</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <style>
         /* Importing Google Fonts - Poppins */
@@ -19,7 +19,6 @@
 
         body {
             background: #680000;
-            /* Red background */
         }
 
         .select-box,
@@ -34,7 +33,6 @@
 
         .select-box {
             background: #000;
-            /* Black background */
             padding: 20px 25px 25px;
             border-radius: 5px;
             max-width: 400px;
@@ -52,7 +50,6 @@
             padding-bottom: 10px;
             border-bottom: 1px solid lightgrey;
             color: #fff;
-            /* White text */
         }
 
         .select-box .title {
@@ -60,7 +57,6 @@
             font-weight: 500;
             margin: 20px 0;
             color: #fff;
-            /* White text */
         }
 
         .select-box .options {
@@ -75,19 +71,15 @@
             padding: 10px 0;
             border: none;
             background: #5e0000;
-            /* Red background */
             border-radius: 5px;
             color: #fff;
-            /* White text */
             outline: none;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .options button:hover,
-        .btn button:hover {
+        .options button:hover {
             background: #8a0000;
-            /* Darker red on hover */
             box-shadow: 0px 0px 10px white;
         }
 
@@ -157,7 +149,6 @@
             width: 50%;
             height: 100%;
             background: #D32F2F;
-            /* Red slider */
             border-radius: 5px;
             transition: all 0.3s ease;
         }
@@ -181,13 +172,11 @@
             width: 90px;
             margin: 2px;
             color: #D32F2F;
-            /* Red text */
             font-size: 40px;
             line-height: 80px;
             text-align: center;
             border-radius: 5px;
             background: #000;
-            /* Black background */
         }
 
         .play-area section span:hover {
@@ -203,7 +192,6 @@
             opacity: 0;
             text-align: center;
             background: #000;
-            /* Black background */
             pointer-events: none;
             transform: translate(-50%, -50%) scale(0.9);
         }
@@ -224,14 +212,12 @@
             display: flex;
             justify-content: center;
             color: #fff;
-            /* White text */
         }
 
         .result-box .won-text p {
             font-weight: 600;
             margin: 0 5px;
             color: #D32F2F;
-            /* Red text */
         }
 
         .result-box .btn {
@@ -247,10 +233,8 @@
             padding: 8px 20px;
             border: none;
             background: #D32F2F;
-            /* Red background */
             border-radius: 5px;
             color: #fff;
-            /* White text */
             outline: none;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -322,8 +306,11 @@
         let playerSign = "X";
         let runBot = true;
 
-        // Probability logic for user vs computer
-        let userWinProbability = 0.65; // 65% chance for user to win
+        const winCombinations = [
+            [1, 2, 3], [4, 5, 6], [7, 8, 9],
+            [1, 4, 7], [2, 5, 8], [3, 6, 9],
+            [1, 5, 9], [3, 5, 7]
+        ];
 
         window.onload = () => {
             allBox.forEach(box => {
@@ -365,15 +352,8 @@
         function bot() {
             if (runBot) {
                 const availableBoxes = [...allBox].filter(box => !box.childElementCount);
-                let randomBox;
-
-                if (Math.random() <= userWinProbability) {
-                    // Favor the user (65% chance)
-                    randomBox = availableBoxes[0]; // Choose the first available box for simplicity
-                } else {
-                    // Normal/random play (35% chance)
-                    randomBox = availableBoxes[Math.floor(Math.random() * availableBoxes.length)];
-                }
+                let bestMove = minimax("O");
+                let randomBox = availableBoxes.find(box => box.classList.contains("box" + bestMove));
 
                 if (randomBox) {
                     if (players.classList.contains("player")) {
@@ -394,29 +374,75 @@
             }
         }
 
+        function minimax(player) {
+            let bestScore = -Infinity;
+            let bestMove = null;
+
+            for (let i = 1; i <= 9; i++) {
+                const box = document.querySelector(".box" + i);
+
+                if (!box.childElementCount) {
+                    box.innerHTML = player === "O" ? `<i class="${playerOIcon}"></i>` : `<i class="${playerXIcon}"></i>`;
+                    box.setAttribute("id", player);
+
+                    let score = minimaxScore(player);
+
+                    box.innerHTML = "";
+                    box.removeAttribute("id");
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = i;
+                    }
+                }
+            }
+
+            return bestMove;
+        }
+
+        function minimaxScore(player) {
+            const result = checkResult(player);
+
+            if (result === "win") return 10;
+            if (result === "lose") return -10;
+            if (result === "draw") return 0;
+
+            return 0;
+        }
+
+        function checkResult(player) {
+            for (const combination of winCombinations) {
+                const [a, b, c] = combination;
+                if (getIdVal(a) === player && getIdVal(b) === player && getIdVal(c) === player) {
+                    return "win";
+                }
+            }
+            return "draw";
+        }
+
         function getIdVal(classname) {
             return document.querySelector(".box" + classname).id;
         }
 
-        function checkIdSign(val1, val2, val3, sign) {
-            return getIdVal(val1) === sign && getIdVal(val2) === sign && getIdVal(val3) === sign;
+        function checkWinner() {
+            for (const combination of winCombinations) {
+                const [a, b, c] = combination;
+                if (getIdVal(a) && getIdVal(a) === getIdVal(b) && getIdVal(b) === getIdVal(c)) {
+                    return getIdVal(a);
+                }
+            }
+            return null;
         }
 
         function selectWinner() {
-            const winningCombinations = [
-                [1, 2, 3], [4, 5, 6], [7, 8, 9],
-                [1, 4, 7], [2, 5, 8], [3, 6, 9],
-                [1, 5, 9], [3, 5, 7]
-            ];
+            const winner = checkWinner();
 
-            const isWinner = winningCombinations.some(combination => checkIdSign(...combination, playerSign));
-
-            if (isWinner) {
+            if (winner) {
                 runBot = false;
                 setTimeout(() => {
                     resultBox.classList.add("show");
                     playBoard.classList.remove("show");
-                    wonText.innerHTML = `Player <p>${playerSign}</p> won the game!`;
+                    wonText.innerHTML = `Player <p>${winner}</p> won the game!`;
                 }, 700);
             } else if ([...allBox].every(box => box.id)) {
                 runBot = false;
@@ -429,7 +455,24 @@
         }
 
         replayBtn.onclick = () => {
-            window.location.reload();
+            // Reset all boxes
+            allBox.forEach(box => {
+                box.innerHTML = '';
+                box.removeAttribute('id');
+                box.style.pointerEvents = 'auto';
+            });
+
+            // Hide result box and show the playboard
+            resultBox.classList.remove("show");
+            playBoard.classList.add("show");
+
+            // Reset player sign
+            playerSign = "X";
+            players.classList.remove("active");
+            players.classList.add("active");
+            
+            // Allow the player to play again
+            runBot = true;
         };
     </script>
 
