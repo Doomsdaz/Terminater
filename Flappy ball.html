@@ -304,7 +304,7 @@
                 highestScoreDisplay.textContent = `High Score: ${highestScore}`;
             }
 
-            const rankIndex = Math.min(Math.floor(score / 5), ranks.length - 1);
+            const rankIndex = Math.min(Math.floor(score / 20), ranks.length - 1);
             currentRank = ranks[rankIndex];
             rankDisplay.innerHTML = `Rank: <span>${currentRank}</span>`;
         }
