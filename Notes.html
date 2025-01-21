@@ -34,112 +34,85 @@
             font-weight: bold;
         }
 
-        .pdf-section {
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
             padding: 5rem 10%;
+        }
+
+        .card {
+            background: black;
+            color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease-in-out;
+            width: 300px;
             text-align: center;
         }
 
-        .pdf-section h2 {
-            font-size: 3.5rem;
+        .card h3 {
+            font-size: 2rem;
             color: red;
-            margin-bottom: 3rem;
-            animation: fadeIn 1.5s ease-in-out;
+            margin-bottom: 1.5rem;
         }
 
-        .pdf-grid {
+        .card .pdf-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            grid-template-columns: 1fr;
+            gap: 1rem;
         }
 
         .pdf-button {
-            padding: 1.5rem;
-            font-size: 1.8rem;
+            padding: 1rem;
+            font-size: 1.2rem;
             color: white;
-            background: black;
-            border: 2px solid rgb(0, 0, 0);
+            background: rgb(50, 50, 50);
             border-radius: 0.5rem;
-            transition: all 0.3s ease-in-out;
-            animation: slideIn 1.2s ease-in-out;
+            transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
 
         .pdf-button:hover {
             background: rgb(114, 114, 114);
-            color: rgb(0, 0, 0);
             transform: scale(1.05);
-            box-shadow: 0 0 15px rgb(255, 255, 255);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .return-container{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-
-        .return-btn {
-            padding: 1.5rem;
-            font-size: 1.8rem;
-            color: white;
-            background: black;
-            border: 2px solid red;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease-in-out;
-            animation: slideIn 1.2s ease-in-out;
-        }
-
-        .return-btn:hover {
-            background: rgb(132, 3, 3);
-            color: rgb(0, 0, 0);
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgb(255, 0, 0);
-            color: white;
+        .card:hover {
+            transform: translateY(-10px);
         }
     </style>
-    <title>Subject PDFs</title>
+    <title>PDF Notes</title>
 </head>
 
 <body>
     <header>
-        Grade-8 PDFs
+        PDFs Cheats
     </header>
 
-    <section class="pdf-section">
-        <h2>Access Your PDFs !</h2>
-        <div class="pdf-grid">
-            <a href="Hindi_lit.copy.pdf" class="pdf-button">Hindi</a>
-            <a href="chemistry.pdf" target="_blank" class="pdf-button">Chemistry</a>
-            <a href="Hindi_Grammar.copy.pdf" class="pdf-button">Hindi Grammar</a>
-            <a href="Go_Grammar.copy.pdf" class="pdf-button">English Grammar</a>
-            <a href="English_literature.copy.pdf" class="pdf-button">English Literature</a>
-            <a href="History .copy.pdf" class="pdf-button">History</a>
+    <div class="cards-container">
+        <div class="card">
+            <h3>8th Grade PDFs</h3>
+            <div class="pdf-grid">
+                <a href="History .copy.pdf" class="pdf-button">History</a>
+                <a href="chemistry.pdf" target="_blank" class="pdf-button">Chemistry</a>
+                <a href="sanskrit8.pdf" class="pdf-button">Sanskrit</a>
+                <a href="English_literature.copy.pdf" class="pdf-button">English Literature</a>
+                <a href="Go_Grammar.copy.pdf" class="pdf-button">English Grammar</a>
+                <a href="Hindi_lit.copy.pdf" class="pdf-button">Hindi Literature</a>
+                <a href="Hindi_Grammar.copy.pdf" class="pdf-button">Hindi Grammar</a>
+            </div>
         </div>
-    </section>
-    <div class="return-container">
-        <button class="return-btn" onclick="window.location.href='Main.html'">Return</button>
+
+        <div class="card">
+            <h3>7th Grade PDFs</h3>
+            <div class="pdf-grid">
+                <a href="computer8.pdf" class="pdf-button">Computer</a>
+                <a href="English.pdf" class="pdf-button">English Literature</a>
+                <a href="grammarall.pdf".pdf" class="pdf-button">Grammar Overall</a>
+            </div>
+        </div>
     </div>
 </body>
 
