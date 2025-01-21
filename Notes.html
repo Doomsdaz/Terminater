@@ -82,6 +82,24 @@
         .card:hover {
             transform: translateY(-10px);
         }
+        .return-button {
+            display: block;
+            margin: 3rem auto;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            color: white;
+            background: rgb(50, 50, 50);
+            border-radius: 0.5rem;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+            width: max-content;
+        }
+
+        .return-button:hover {
+            background: rgb(114, 114, 114);
+            transform: scale(1.05);
+        }
     </style>
     <title>PDF Notes</title>
 </head>
@@ -114,6 +132,8 @@
             </div>
         </div>
     </div>
+    
+    <a href="#" class="return-button">Return to Top</a>
 </body>
 
 </html>
