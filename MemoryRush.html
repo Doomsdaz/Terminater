@@ -29,10 +29,7 @@
     .card {
       width: 90px;
       height: 90px;
-      background-color: #830d00;
-      color: white;
-      font-size: 24px;
-      font-weight: bold;
+      background-color: black;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -40,18 +37,21 @@
       cursor: pointer;
       transform: scale(1);
       transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+      box-shadow: 0px 0px 25px red;
+    }
+    .card img {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .card.flipped img {
+      display: block;
     }
     .card.flipped {
-      background-color: #b11807;
+      background-color: transparent;
       transform: scale(1.1);
-    }
-    .card.matched {
-      background-color: #790000;
-      cursor: not-allowed;
-    }
-    .card:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 25px #ffffff;
     }
     .message, .percentage, .timer, .level {
       font-size: 20px;
@@ -109,6 +109,7 @@
   <button class="button" id="next-level-button" style="display: none;" onclick="nextLevel()">Next Level</button>
 
   <script>
+    const imagePaths = ["wanda.jpg", "hulk.jpg", "ironman.jpg", "Natasaa.jpg", "Thanoss.jpg", "thor.jpg", "superman.jpg", "vision.jpg"];
     let shuffledCards = [];
     let flippedCards = [];
     let matchedPairs = 0;
@@ -118,12 +119,12 @@
     let level = 1;
     const maxLevel = 10; // Maximum level
 
-    const gameContainer = document.getElementById('game-container');
-    const message = document.getElementById('message');
-    const percentageDisplay = document.getElementById('percentage');
-    const timerDisplay = document.getElementById('timer');
-    const levelDisplay = document.getElementById('level');
-    const nextLevelButton = document.getElementById('next-level-button');
+    const gameContainer = document.getElementById("game-container");
+    const message = document.getElementById("message");
+    const percentageDisplay = document.getElementById("percentage");
+    const timerDisplay = document.getElementById("timer");
+    const levelDisplay = document.getElementById("level");
+    const nextLevelButton = document.getElementById("next-level-button");
 
     // Function to create cards for the current level
     function createCards() {
@@ -132,11 +133,16 @@
       shuffledCards = shuffle(cards);
       
       shuffledCards.forEach((cardValue, index) => {
-        const card = document.createElement('div');
-        card.classList.add('card');
-        card.setAttribute('data-index', index);
-        card.setAttribute('data-value', cardValue);
-        card.addEventListener('click', flipCard);
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.setAttribute("data-index", index);
+        card.setAttribute("data-value", cardValue);
+
+        const img = document.createElement("img");
+        img.src = cardValue;
+        card.appendChild(img);
+
+        card.addEventListener("click", flipCard);
         gameContainer.appendChild(card);
       });
 
@@ -147,7 +153,7 @@
     function generateCards(pairs) {
       const cardValues = [];
       for (let i = 0; i < pairs; i++) {
-        cardValues.push(String.fromCharCode(65 + i)); // Letters A, B, C, ...
+        cardValues.push(imagePaths[i % imagePaths.length]); // Reuse images
       }
       return [...cardValues, ...cardValues]; // Return two of each card
     }
@@ -167,14 +173,13 @@
 
     // Flip the card when clicked
     function flipCard(event) {
-      const clickedCard = event.target;
+      const clickedCard = event.target.closest(".card");
 
-      if (flippedCards.length === 2 || clickedCard.classList.contains('flipped') || clickedCard.classList.contains('matched')) {
+      if (flippedCards.length === 2 || clickedCard.classList.contains("flipped") || clickedCard.classList.contains("matched")) {
         return;
       }
 
-      clickedCard.classList.add('flipped');
-      clickedCard.textContent = clickedCard.getAttribute('data-value');
+      clickedCard.classList.add("flipped");
       flippedCards.push(clickedCard);
 
       if (flippedCards.length === 2) {
@@ -185,16 +190,14 @@
     // Check if the two flipped cards match
     function checkMatch() {
       const [firstCard, secondCard] = flippedCards;
-      if (firstCard.getAttribute('data-value') === secondCard.getAttribute('data-value')) {
-        firstCard.classList.add('matched');
-        secondCard.classList.add('matched');
+      if (firstCard.getAttribute("data-value") === secondCard.getAttribute("data-value")) {
+        firstCard.classList.add("matched");
+        secondCard.classList.add("matched");
         matchedPairs++;
         updatePercentage();
       } else {
-        firstCard.classList.remove('flipped');
-        secondCard.classList.remove('flipped');
-        firstCard.textContent = '';
-        secondCard.textContent = '';
+        firstCard.classList.remove("flipped");
+        secondCard.classList.remove("flipped");
       }
       flippedCards = [];
 
@@ -219,15 +222,15 @@
           clearInterval(timerInterval);
           message.textContent = `Time's up! You matched ${matchedPairs} pairs.`;
           updatePercentage();
-          alert('Time\'s up! Try again.');
+          alert("Time's up! Try again.");
           resetGame(); // Reset the game when time runs out
         }
-      }, 2000); // Timer updates every 1 second
+      }, 1000); // Timer updates every 1 second
     }
 
     // Show Next Level Button
     function showNextLevelButton() {
-      nextLevelButton.style.display = 'block'; // Show the button
+      nextLevelButton.style.display = "block"; // Show the button
     }
 
     // Proceed to next level when button is clicked
@@ -238,13 +241,13 @@
         levelDisplay.textContent = `Level: ${getLevelName(level)}`;
         matchedPairs = 0; // Reset matched pairs
         shuffledCards = shuffle(generateCards(level + 2)); // More cards as level increases
-        gameContainer.innerHTML = ''; // Clear the old game board
+        gameContainer.innerHTML = ""; // Clear the old game board
         createCards();
-        nextLevelButton.style.display = 'none'; // Hide the Next Level button
+        nextLevelButton.style.display = "none"; // Hide the Next Level button
         message.textContent = `Level ${level}: Match the pairs!`;
       } else {
         message.textContent = `Congratulations! You've completed all levels!`;
-        nextLevelButton.style.display = 'none'; // Hide the button when max level is reached
+        nextLevelButton.style.display = "none"; // Hide the button when max level is reached
       }
     }
 
@@ -254,20 +257,20 @@
       return levels[level - 1] || `Level ${level}`;
     }
 
-    // Reset the game (save current level)
+    // Reset the game
     function resetGame() {
       shuffledCards = shuffle(generateCards(level + 2));
       matchedPairs = 0;
       flippedCards = [];
       timeLeft = 60;
       clearInterval(timerInterval);
-      gameContainer.innerHTML = '';
+      gameContainer.innerHTML = "";
       createCards();
       levelDisplay.textContent = `Level: ${getLevelName(level)}`;
-      message.textContent = 'Find all the matching pairs!';
-      percentageDisplay.textContent = 'Pairs Matched: 0%';
+      message.textContent = "Find all the matching pairs!";
+      percentageDisplay.textContent = "Pairs Matched: 0%";
       timerDisplay.textContent = `Time Left: ${timeLeft}s`;
-      nextLevelButton.style.display = 'none'; // Hide Next Level button when restarting
+      nextLevelButton.style.display = "none"; // Hide Next Level button when restarting
     }
 
     createCards();
